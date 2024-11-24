@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { useFetch } from '@vueuse/core'
-import { ref, toValue } from 'vue'
+import { ref, toValue, useTemplateRef } from 'vue'
 import CustomerOrderStatusList from '@/components/CustomerOrderStatusList.vue'
 import type { Order } from '@/types/Order.type'
 
-const apiOrdersUrl = new URL('http://localhost:8000/api/orders')
+const apiOrdersUrl = new URL('https://serveur.ronanmessuwe.info:31415/api/orders')
 const textfieldTable = ref<string>('')
 
 /** True if at least one query has been made. */
 const hasFetchedOnce = ref<boolean>(false)
 
+/** If false, stop submit. */
+const isFormValid = ref<boolean>(true)
+
+/** Search input ref to blur the field when form is submitting. */
+const searchInput = useTemplateRef<HTMLInputElement>('searchInput')
+
+/** Request api has error. */
 const hasError = ref<boolean>(false)
 
 /** Orders to display. */
@@ -32,6 +39,17 @@ const latestTableCode = ref<string>('')
 
 /** Form submit handle. */
 const formSubmitHandle = async () => {
+  // reset error
+  hasError.value = false
+
+  // invalid form? stop
+  if (!isFormValid.value) {
+    return false
+  }
+
+  // blur input
+  if (searchInput.value) searchInput.value.blur()
+
   latestTableCode.value = textfieldTable.value
   apiOrdersUrl.searchParams.set('table', textfieldTable.value)
 
@@ -51,10 +69,6 @@ const formSubmitHandle = async () => {
 </script>
 
 <style>
-.temp {
-  color: #052f3f;
-  color: #b9905b;
-}
 .customer-order-status {
   margin-top: 2rem;
 }
@@ -77,13 +91,19 @@ h2 {
 
 <template>
   <div class="customer-order-status">
-    <v-form @submit.prevent="formSubmitHandle">
+    <v-form action="" @submit.prevent="formSubmitHandle" v-model="isFormValid">
       <v-text-field
         type="search"
+        autocomplete="off"
+        autocapitalize="characters"
+        spellcheck="false"
+        autocorrect="off"
+        name="table"
+        placeholder="T4"
         variant="outlined"
         append-inner-icon="mdi-magnify"
         label="Code de votre table"
-        placeholder="T4"
+        ref="searchInput"
         v-model="textfieldTable"
         :loading="queryIsFetching"
         :rules="rules"
@@ -93,7 +113,9 @@ h2 {
     </v-form>
   </div>
   <div v-if="!queryIsFetching && hasFetchedOnce && !hasError">
-    <h2>Table&nbsp;: {{ latestTableCode }}</h2>
+    <h2 class="mb-10">
+      Commande{{ orders.length > 1 ? 's' : '' }} de la table&nbsp;: {{ latestTableCode }}
+    </h2>
     <CustomerOrderStatusList v-if="orders.length > 0" :orders="toValue(orders)" />
     <div v-else>
       <p class="no-order-for-this-table">

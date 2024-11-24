@@ -3,7 +3,7 @@ import { OrderStatus } from '@/enums/OrderStatus.enum'
 import type { Order } from '@/types/Order.type'
 import { onMounted, onUnmounted, ref } from 'vue'
 
-const props = defineProps<{ order: Order }>()
+const props = defineProps<{ order: Order; index: number }>()
 const myOrder = ref(props.order)
 
 /** Channel to subscribe. */
@@ -63,6 +63,16 @@ const currentStep = ref(getOrderStatusStepIndex(myOrder.value.status) + 1)
 
 <template>
   <div class="customer-order-status-list-item">
+    <div class="mb-2">
+      <h3>
+        Commande n°{{ index + 1 }} passée il y a moins de 5 minutes.
+        <small class="font-italic">fausse date</small>
+      </h3>
+      <p>
+        Détails&nbsp;: 1 Martini - 1 Daiquiri - 2 Mojito
+        <small class="font-italic">faux détails</small>
+      </p>
+    </div>
     <v-stepper alt-labels hide-actions v-model="currentStep" theme="dark">
       <v-stepper-header>
         <template v-for="(item, index) in steps" :key="`${index}-step`">
@@ -94,10 +104,7 @@ const currentStep = ref(getOrderStatusStepIndex(myOrder.value.status) + 1)
                 </v-card-text>
               </div>
               <v-avatar class="ma-3" rounded="0" size="300">
-                <v-img
-                  src="./src/assets/cocktail.fr-44164.jpg"
-                  alt="barman prépare un cocktail"
-                ></v-img>
+                <v-img src="/images/cocktail.fr-44164.jpg" alt="barman prépare un cocktail"></v-img>
               </v-avatar>
             </div>
           </v-card>
@@ -109,13 +116,13 @@ const currentStep = ref(getOrderStatusStepIndex(myOrder.value.status) + 1)
                 <v-card-title>{{ steps[1] }}</v-card-title>
                 <v-card-text>
                   <p>Ça y est&nbsp;! Le barman s'occupe de votre commande.</p>
-                  <p>Un bon cocktail, ce sont d'abords de bons ingrédients&nbsp;!</p>
+                  <p>Un bon cocktail, ce sont d'abord de bons ingrédients&nbsp;!</p>
                   <p>Le saviez-vous&nbsp;? Tous nos ingrédients sont bio. (hors alcool)</p>
                 </v-card-text>
               </div>
               <v-avatar class="ma-3" rounded="0" size="300">
                 <v-img
-                  src="./src/assets/man-cutting-lime-cocktail.jpg"
+                  src="/images/man-cutting-lime-cocktail.jpg"
                   alt="homme qui coupe des rondelles de citron"
                 ></v-img>
               </v-avatar>
@@ -146,7 +153,7 @@ const currentStep = ref(getOrderStatusStepIndex(myOrder.value.status) + 1)
 
               <v-avatar class="ma-3" rounded="0" size="300">
                 <v-img
-                  src="./src/assets/ustensile-shaker-cocktails-AdobeStock_219090660.jpg"
+                  src="/images/ustensile-shaker-cocktails-AdobeStock_219090660.jpg"
                   alt="barman tient un shaker dans les mains"
                 ></v-img>
               </v-avatar>
@@ -172,7 +179,7 @@ const currentStep = ref(getOrderStatusStepIndex(myOrder.value.status) + 1)
 
               <v-avatar class="ma-3" rounded="0" size="300">
                 <v-img
-                  src="./src/assets/front-view-bartender-preparing-drink.jpg"
+                  src="/images/front-view-bartender-preparing-drink.jpg"
                   alt="barman ajoute des glaçons dans un verre"
                 ></v-img>
               </v-avatar>
@@ -186,7 +193,7 @@ const currentStep = ref(getOrderStatusStepIndex(myOrder.value.status) + 1)
                 <v-card-title>{{ steps[4] }}</v-card-title>
                 <v-card-text>
                   <p>
-                    Votre commande est prête.<br />Elle va vous être livrée dans quelques instants.
+                    Votre commande est prête.<br />Merci de vous rendre au bar pour la récupérer.
                   </p>
                   <p class="text-h6 mt-4">Bonne dégustation !</p>
                 </v-card-text>
@@ -194,7 +201,7 @@ const currentStep = ref(getOrderStatusStepIndex(myOrder.value.status) + 1)
 
               <v-avatar class="ma-3" rounded="0" size="300">
                 <v-img
-                  src="./src/assets/father-son-drinking-cocktail.jpg"
+                  src="/images/father-son-drinking-cocktail.jpg"
                   alt="2 hommes trinquent avec un cocktail à la main"
                 ></v-img>
               </v-avatar>

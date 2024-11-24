@@ -14,8 +14,8 @@ defineProps<{ orders: Order[] }>()
 </style>
 <template>
   <ul class="customer-order-status-list">
-    <li v-for="order in orders" :key="order.order_id">
-      <CustomerOrderStatusListItem :order="order" />
+    <li v-for="(order, index) in orders" :key="order.order_id">
+      <CustomerOrderStatusListItem :order="order" :index="index" />
     </li>
   </ul>
 </template>
